@@ -50,6 +50,21 @@
                         <div id="success_message"></div>
                         <a href="#" data-bs-toggle="modal" data-bs-target="#AddArticleModal" class="btn btn-primary">Add Article</a>
                         <h4>Article Data</h4>
+                        <table class="table table-bordered table-stripped">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Name</th>
+                                    <th>Description</th>
+                                    <th>Image</th>
+                                    <th>Price</th>
+                                    <th>Edit</th>
+                                    <th>Delete</th>
+                                </tr>
+                            </thead>
+                            <tbody>   
+                            </tbody>
+                        </table>
                     </div>
                 </div>  
             </div> 
@@ -60,6 +75,32 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script> 
     <script>
         $(document).ready(function () {
+        
+            fetchArticle();
+       
+            function fetchArticle() {
+                $.ajax({
+                    type: "GET",
+                    url: "/fetch-articles",
+                    dataType: "json",
+                    success: function (response) {
+                        $('tbody').html("");
+                        $.each(response.articles, function (key, item) {
+                            $('tbody').append('<tr>\
+                                <td>'+item.id+'</td>\
+                                <td>'+item.name+'</td>\
+                                <td>'+item.description+'</td>\
+                                <td>'+item.image+'</td>\
+                                <td>'+item.price+'</td>\
+                                <td><button type="button" value="'+item.id+'" class="edit_article btn btn-primary btn-sm">Edit</button</td>\
+                                <td><button type="button" value="'+item.id+'" class="delete_article btn btn-danger btn-sm">Delete</button</td>\
+                            </tr>'); 
+                        });     
+                    }
+                });  
+            }
+        
+        
             $(document).on('click', '.add_article', function (e) {
                 e.preventDefault();
                 
@@ -86,7 +127,7 @@
                             $('#saveform_errList').html("");
                             $('#saveform_errList').addClass('alert alert-danger');
                             $.each(response.errors, function (key, err_values) {
-                                $('#saveform_errList').append('<li>'+err_values+'</li>');    
+                                $('#saveform_errList').append('<li style="list-style: none;">'+err_values+'</li>');    
                             });
                         } else {
                             $('#saveform_errList').html("");
@@ -94,6 +135,7 @@
                             $('#success_message').text(response.message);
                             $('#AddArticleModal').modal('hide');
                             $('#AddArticleModal').find('input').val("");
+                            fetchArticle();
                         }
                         
                     }

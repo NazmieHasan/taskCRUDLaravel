@@ -12,6 +12,13 @@ class ArticleController extends Controller
         return view('article.index');
     }
     
+    public function fetchArticle() {
+        $articles = Article::all();
+        return response()->json([
+            'articles' => $articles,
+        ]);
+    }
+    
     public function store(Request $request) {
         $validator = Validator::make($request->all(), [
             'name' => 'required|max:191',
