@@ -106,17 +106,25 @@ class ArticleController extends Controller
         ]);
     }
     
-    public function searchByName(Request $request) {
+    public function searchByNameAndPrice(Request $request) {
+    
+        $name = ''; $articleFinds = ''; 
+        $price = '';
         
-        $name = ''; $articleFinds = '';
         $nameSearch = $request->input('name');
+        $priceSearch = $request->input('price');
         
         if ($nameSearch != null) {
             $name = $nameSearch;
         } 
         
+        if ($priceSearch != null) {
+            $price = $priceSearch;
+        }
+        
         $articleFinds = DB::table('articles')
             ->where('name', 'like', '%'.$name.'%')
+            ->where('price', $price)
             ->get();
             
         return view('article.search', [

@@ -20,6 +20,10 @@
                                 <label for="">Name</label>
                                 <input type="text" class="name form-control" name="name" />
                             </div>
+                            <div class="form-group mb-3">
+                                <label for="">Price</label>
+                                <input type="text" class="name form-control" name="price" />
+                            </div>
                             <button type="submit" class="btn btn-primary" value="submit">Submit</button>
                         </div>
                     </div>
@@ -30,6 +34,7 @@
                         <hr />
                         <p>{{ $art->id }}</p>
                         <p>{{ $art->name }}</p>
+                        <p>{{ $art->price }}</p>
                     @endforeach
                 @endif
             

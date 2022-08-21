@@ -9,8 +9,8 @@ Route::post('/articles', 'ArticleController@store');
 Route::get('/edit-article/{id}', 'ArticleController@edit');
 Route::put('/update-article/{id}', 'ArticleController@update');
 Route::delete('/delete-article/{id}', 'ArticleController@destroy');
-Route::get('/articles-search', 'ArticleController@searchByName');
-Route::post('/articles-search', 'ArticleController@searchByName');
+Route::get('/articles-search', 'ArticleController@searchByNameAndPrice');
+Route::post('/articles-search', 'ArticleController@searchByNameAndPrice');
 
 Route::get('/', function () {
     return view('welcome');
