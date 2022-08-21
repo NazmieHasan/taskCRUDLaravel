@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Article;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use DB;
 
 class ArticleController extends Controller
 {
@@ -105,4 +106,22 @@ class ArticleController extends Controller
         ]);
     }
     
+    public function searchByName(Request $request) {
+        
+        $name = ''; $articleFinds = '';
+        $nameSearch = $request->input('name');
+        
+        if ($nameSearch != null) {
+            $name = $nameSearch;
+        } 
+        
+        $articleFinds = DB::table('articles')
+            ->where('name', 'like', '%'.$name.'%')
+            ->get();
+            
+        return view('article.search', [
+            'articleFinds' => $articleFinds,
+        ]);    
+    }
+       
 }
