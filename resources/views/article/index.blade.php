@@ -154,7 +154,7 @@
                                 <td>'+item.name+'</td>\
                                 <td>'+item.description+'</td>\
                                 <td>'+item.image+'</td>\
-                                <td>'+item.price+'</td>\
+                                <td>'+item.price+'$</td>\
                                 <td><button type="button" value="'+item.id+'" class="edit_article btn btn-primary btn-sm">Edit</button</td>\
                                 <td><button type="button" value="'+item.id+'" class="delete_article btn btn-danger btn-sm">Delete</button</td>\
                             </tr>'); 
@@ -187,7 +187,7 @@
                     url: "/delete-article/"+art_id,
                     success: function (response) {
                         $('#success_message').addClass('alert alert-success');
-                        $('#sucess_message').text(response.message);
+                        $('#success_message').text(response.message);
                         $('#DeleteArticleModal').modal('hide');
                         $('.delete_article_btn').text("Yes, Delete");
                         fetchArticle();

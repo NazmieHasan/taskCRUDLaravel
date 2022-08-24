@@ -11,6 +11,8 @@ Route::put('/update-article/{id}', 'ArticleController@update');
 Route::delete('/delete-article/{id}', 'ArticleController@destroy');
 Route::get('/articles-search', 'ArticleController@searchByNameAndPrice');
 Route::post('/articles-search', 'ArticleController@searchByNameAndPrice');
+Route::get('/add-articles','ArticleController@create');
+Route::post('/store-articles','ArticleController@storenew');
 
 Route::get('/', function () {
     return view('welcome');

@@ -35,6 +35,7 @@
                         <p>{{ $art->id }}</p>
                         <p>{{ $art->name }}</p>
                         <p>{{ $art->price }}</p>
+                        <img src="{{ asset('storage/images/articles/'.$art->image) }}" class="img-thumbnail" alt="article image" />
                     @endforeach
                 @endif
             

@@ -25,7 +25,7 @@ class ArticleController extends Controller
             'name' => 'required|max:191',
             'description' => 'required|max:191',
             'image' => 'required|max:191',
-            'price' => 'required|max:191',
+            'price' => 'required|numeric|min:0.01|regex:/^\d+(\.\d{1,2})?$/',
         ]);
     
         if($validator->fails()) {
@@ -47,6 +47,40 @@ class ArticleController extends Controller
         }   
     }
     
+    
+    public function create()
+    {
+        return view('article.create');
+    }
+
+    public function storenew(Request $request)
+    {
+        $this->validate($request, [
+            'name'=>'required|max:120',
+            'description'=>'required|max:120',
+            'image' => 'required|mimes:jpg,jpeg|max:2048',
+            'price' => 'required|numeric|min:0.01|regex:/^\d+(\.\d{1,2})?$/',
+        ]);
+
+            $article = new Article;
+            $article->name = $request->input('name');
+            $article->description = $request->input('description');
+            
+            $image = $request->file('image');
+            $fileName = rand() . '.' . $image->getClientOriginalExtension();
+            $path = $image->storeAs('public/images/articles', $fileName);
+            $article->image = $fileName;
+            
+            $article->price = $request->input('price');
+            $article->save();
+        
+        return redirect('/add-articles')->with('status','Inserted Successfully.');
+    }
+    
+    
+    
+                
+    
     public function edit($id) {
         $article = Article::find($id);  
         if($article) {
@@ -67,7 +101,7 @@ class ArticleController extends Controller
             'name' => 'required|max:191',
             'description' => 'required|max:191',
             'image' => 'required|max:191',
-            'price' => 'required|max:191',
+            'price' => 'required|numeric|min:0.01|regex:/^\d+(\.\d{1,2})?$/',
         ]);
     
         if($validator->fails()) {
