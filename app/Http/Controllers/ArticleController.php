@@ -22,9 +22,8 @@ class ArticleController extends Controller
     
     public function store(Request $request) {
         $validator = Validator::make($request->all(), [
-            'name' => 'required|max:191',
-            'description' => 'required|max:191',
-            'image' => 'required|max:191',
+            'name' => 'required|max:120',
+            'description' => 'required|max:255',
             'price' => 'required|numeric|min:0.01|regex:/^\d+(\.\d{1,2})?$/',
         ]);
     
@@ -37,7 +36,7 @@ class ArticleController extends Controller
             $article = new Article;
             $article->name = $request->input('name');
             $article->description = $request->input('description');
-            $article->image = $request->input('image');
+            $article->image = "";
             $article->price = $request->input('price');
             $article->save();
             return response()->json([
@@ -57,7 +56,7 @@ class ArticleController extends Controller
     {
         $this->validate($request, [
             'name'=>'required|max:120',
-            'description'=>'required|max:120',
+            'description'=>'required|max:255',
             'image' => 'required|mimes:jpg,jpeg|max:2048',
             'price' => 'required|numeric|min:0.01|regex:/^\d+(\.\d{1,2})?$/',
         ]);
@@ -98,12 +97,11 @@ class ArticleController extends Controller
     
     public function update(Request $request, $id) {
         $validator = Validator::make($request->all(), [
-            'name' => 'required|max:191',
-            'description' => 'required|max:191',
-            'image' => 'required|max:191',
+            'name' => 'required|max:120',
+            'description' => 'required|max:255',
             'price' => 'required|numeric|min:0.01|regex:/^\d+(\.\d{1,2})?$/',
         ]);
-    
+        
         if($validator->fails()) {
             return response()->json([
                 'status' => 400,
@@ -114,7 +112,6 @@ class ArticleController extends Controller
             if($article) {
                 $article->name = $request->input('name');
                 $article->description = $request->input('description');
-                $article->image = $request->input('image');
                 $article->price = $request->input('price');
                 $article->update();
                 return response()->json([
@@ -143,23 +140,31 @@ class ArticleController extends Controller
     public function searchByNameAndPrice(Request $request) {
     
         $name = ''; $articleFinds = ''; 
-        $price = '';
+        $pricefrom = ''; $priceto = ''; 
         
-        $nameSearch = $request->input('name');
-        $priceSearch = $request->input('price');
+        $name = $request->input('name');
+        $pricefrom = $request->input('pricefrom');
+        $priceto = $request->input('priceto');
+       
+        $qb = DB::table('articles');
         
-        if ($nameSearch != null) {
-            $name = $nameSearch;
-        } 
-        
-        if ($priceSearch != null) {
-            $price = $priceSearch;
+        if ($name) {
+            $qb->where('name', 'like', '%'.$name.'%');
         }
         
-        $articleFinds = DB::table('articles')
-            ->where('name', 'like', '%'.$name.'%')
-            ->where('price', $price)
-            ->get();
+        if ( ($pricefrom ) && ($priceto) ) {
+            $qb->whereBetween('price', [(double)$pricefrom, (double)$priceto]);
+        }
+        
+        if ( ($pricefrom) && (!$priceto) ) {
+            $qb->where('price', '>', (double)$pricefrom);
+        }
+        
+        if ( ($priceto) && (!$pricefrom) ) {
+            $qb->where('price', '<', (double)$priceto);
+        }
+        
+        $articleFinds = $qb->get();
             
         return view('article.search', [
             'articleFinds' => $articleFinds,

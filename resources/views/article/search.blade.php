@@ -11,8 +11,8 @@
     
     <body>
         <div class="content">
+        
             <div class="container mt-5">
-                
                 <form>
                     <div class="row">
                         <div class="col-md-6">
@@ -21,25 +21,48 @@
                                 <input type="text" class="name form-control" name="name" />
                             </div>
                             <div class="form-group mb-3">
-                                <label for="">Price</label>
-                                <input type="text" class="name form-control" name="price" />
+                                <label for="">Price From</label>
+                                <input type="text" class="name form-control" name="pricefrom" />
+                            </div>
+                            <div class="form-group mb-3">
+                                <label for="">Price To</label>
+                                <input type="text" class="name form-control" name="priceto" />
                             </div>
                             <button type="submit" class="btn btn-primary" value="submit">Submit</button>
                         </div>
                     </div>
                 </form>
-   
-                @if (count($articleFinds) > 0)
-                    @foreach ($articleFinds as $art)
-                        <hr />
-                        <p>{{ $art->id }}</p>
-                        <p>{{ $art->name }}</p>
-                        <p>{{ $art->price }}</p>
-                        <img src="{{ asset('storage/images/articles/'.$art->image) }}" class="img-thumbnail" alt="article image" />
-                    @endforeach
-                @endif
-            
             </div>
+             
+            <div class="container mt-5">  
+                @if (count($articleFinds) == 0)
+                    <p>Not found result</p>
+                @else
+                <table class="table table-bordered table-stripped">
+                    <thead>
+                        <tr>
+                            <th width="5">#</th>
+                            <th width="20">Name</th>
+                            <th width="30">Description</th>
+                            <th width="5">Price</th>
+                            <th width="35">Image</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($articleFinds as $art)
+                        <tr>    
+                            <td>{{ $art->id }}</td>
+                            <td>{{ $art->name }}</td>
+                            <td>{{ $art->description }}</td>
+                            <td>{{ $art->price }}</td>
+                            <td><img src="{{ asset('storage/images/articles/'.$art->image) }}" class="img-thumbnail border-0" alt="article image" /></td>
+                        </tr>  
+                        @endforeach       
+                    </tbody>
+                </table>
+                @endif
+            </div>
+            
         </div>    
     </body>
     

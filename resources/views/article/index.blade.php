@@ -28,11 +28,7 @@
                             </div>
                             <div class="form-group mb-3">
                                 <label for="">Description</label>
-                                <input type="description" class="description form-control" />
-                            </div>
-                            <div class="form-group mb-3">
-                                <label for="">Image</label>
-                                <input type="text" class="image form-control" />
+                                <textarea class="description form-control" rows="6"></textarea>
                             </div>
                             <div class="form-group mb-3">
                                 <label for="">Price</label>
@@ -65,12 +61,9 @@
                             </div>
                             <div class="form-group mb-3">
                                 <label for="">Description</label>
-                                <input type="description" id="edit_description" class="description form-control" />
+                                <textarea class="form-control" id="edit_description"  rows="6"></textarea>
                             </div>
-                            <div class="form-group mb-3">
-                                <label for="">Image</label>
-                                <input type="text" id="edit_image" class="image form-control" />
-                            </div>
+                            
                             <div class="form-group mb-3">
                                 <label for="">Price</label>
                                 <input type="text" id="edit_price" class="price form-control" />
@@ -229,7 +222,6 @@
                 var data = {
                     'name' : $('#edit_name').val(),
                     'description' : $('#edit_description').val(),
-                    'image' : $('#edit_image').val(),
                     'price' : $('#edit_price').val(),
                 }
                 
@@ -279,7 +271,6 @@
                 var data = {
                     'name': $('.name').val(),
                     'description': $('.description').val(),
-                    'image': $('.image').val(),
                     'price': $('.price').val(),
                 }
                 
