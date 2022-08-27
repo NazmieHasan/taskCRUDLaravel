@@ -7,29 +7,50 @@
         <title>Laravel Task</title> 
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
         <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://demos.jquerymobile.com/1.4.2/css/themes/default/jquery.mobile-1.4.2.min.css">  
+        <script src="https://demos.jquerymobile.com/1.4.2/js/jquery.js"></script> 
+   	    <script src="https://demos.jquerymobile.com/1.4.2/js/jquery.mobile-1.4.2.min.js"></script>
+	    <script>
+	        $('input').popup();
+	    </script>
+	    <style>
+	    form {
+            margin: 100px 400px !important;
+        }
+        
+        .ui-slider .ui-btn-inner {
+            padding: 4px !important;
+        }
+ 
+        .ui-slider-popup {
+            position: absolute !important;
+            width: 32px;
+            height: 32px;
+            text-align: center;
+            font-size: 16px;
+            padding: 2px;
+            z-index: 100;
+            opacity: 0.8;
+        }
+	    </style>
     </head>
-    
     <body>
         <div class="content">
         
             <div class="container mt-5">
                 <form>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group mb-3">
-                                <label for="">Name</label>
-                                <input type="text" class="name form-control" name="name" />
-                            </div>
-                            <div class="form-group mb-3">
-                                <label for="">Price From</label>
-                                <input type="text" class="name form-control" name="pricefrom" />
-                            </div>
-                            <div class="form-group mb-3">
-                                <label for="">Price To</label>
-                                <input type="text" class="name form-control" name="priceto" />
-                            </div>
-                            <button type="submit" class="btn btn-primary" value="submit">Submit</button>
-                        </div>
+                    <div>
+                        <label for="name">Search by name</label>
+                        <input type="text" id="prName" name="name" placeholder="Enter name" />
+                    </div> 
+                    <div data-role="rangeslider">
+                        <label for="from-price">Price:</label>
+                        <input type="range" name="pricefrom" id="from_price" min="{{ $minPrice }}"; max="{{ $maxPrice }}"; value="{{ $minPriceDefault }}"; step="{{ $step }}"; data-popup-enabled="true" data-show-value="true">
+                        <label for="to-price">Price:</label>
+                        <input type="range" name="priceto" id="to_price" min="{{ $minPrice }}"; max="{{ $maxPrice }}"; value="{{ $maxPriceDefault }}"; step="{{ $step }}"; data-popup-enabled="true" data-show-value="true">
+                    </div>
+                    <div>
+                        <input type="submit" value="submit" onclick="priceRange()" />
                     </div>
                 </form>
             </div>

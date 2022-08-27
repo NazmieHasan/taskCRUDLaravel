@@ -139,6 +139,18 @@ class ArticleController extends Controller
     
     public function searchByNameAndPrice(Request $request) {
     
+        $queryMin = "CAST(price AS DECIMAL(10,2)) ASC";
+        $minPrice = DB::table('articles')->select('price')->orderByRaw($queryMin)->value('price');
+       
+        $queryMax = "CAST(price AS DECIMAL(10,2)) DESC";
+        $maxPrice = DB::table('articles')->select('price')->orderByRaw($queryMax)->value('price');
+        
+        $diffPrice = $maxPrice - $minPrice;
+        $step = $diffPrice / 10;
+
+        $minPriceDefault = $minPrice + ($step * 3); 
+        $maxPriceDefault = $minPrice + ($step * 7);
+    
         $name = ''; $articleFinds = ''; 
         $pricefrom = ''; $priceto = ''; 
         
@@ -168,6 +180,11 @@ class ArticleController extends Controller
             
         return view('article.search', [
             'articleFinds' => $articleFinds,
+            'minPrice' => $minPrice,
+            'maxPrice' => $maxPrice,
+            'step' => $step,
+            'minPriceDefault' => $minPriceDefault,
+            'maxPriceDefault' => $maxPriceDefault,
         ]);    
     }
        
