@@ -14,7 +14,7 @@ class ArticleController extends Controller
     }
     
     public function fetchArticle() {
-        $articles = Article::all();
+        $articles = Article::orderBy('id', 'DESC')->get();
         return response()->json([
             'articles' => $articles,
         ]);
@@ -24,6 +24,7 @@ class ArticleController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|max:120',
             'description' => 'required|max:255',
+            'image' => 'required','mimes:jpg,jpeg','max:2048',
             'price' => 'required|numeric|min:0.01|regex:/^\d+(\.\d{1,2})?$/',
         ]);
     
@@ -36,7 +37,12 @@ class ArticleController extends Controller
             $article = new Article;
             $article->name = $request->input('name');
             $article->description = $request->input('description');
-            $article->image = "";
+            
+            $image = $request->file('image');
+            $fileName = rand() . '.' . $image->getClientOriginalExtension();
+            $path = $image->storeAs('public/images/articles', $fileName);
+            $article->image = $fileName;
+            
             $article->price = $request->input('price');
             $article->save();
             return response()->json([

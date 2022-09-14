@@ -21,24 +21,31 @@
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
+                         <form id="formAddArticle" enctype="multipart/form-data">
+                            {{ csrf_field() }}
                             <ul id="saveform_errList"></ul>
                             <div class="form-group mb-3">
                                 <label for="">Name</label>
-                                <input type="text" class="name form-control" />
+                                <input type="text" name="name" class="name form-control" />
                             </div>
                             <div class="form-group mb-3">
                                 <label for="">Description</label>
-                                <textarea class="description form-control" rows="6"></textarea>
+                                <textarea class="description form-control" rows="6" name="description"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="">Image</label>
+                                <input accept=".jpg, .jpeg" type="file" class="image form-control" name="image">
                             </div>
                             <div class="form-group mb-3">
                                 <label for="">Price</label>
-                                <input type="text" class="price form-control" />
+                                <input type="text" class="price form-control" name="price" />
                             </div>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                             <button type="button" class="btn btn-primary add_article">Save</button>
                         </div>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -57,16 +64,16 @@
                             <input type="hidden" id="edit_art_id" />
                             <div class="form-group mb-3">
                                 <label for="">Name</label>
-                                <input type="text" id="edit_name" class="name form-control" />
+                                <input type="text" id="edit_name" class="form-control" />
                             </div>
                             <div class="form-group mb-3">
                                 <label for="">Description</label>
-                                <textarea class="form-control" id="edit_description"  rows="6"></textarea>
+                                <textarea class="form-control" id="edit_description" rows="6"></textarea>
                             </div>
                             
                             <div class="form-group mb-3">
                                 <label for="">Price</label>
-                                <input type="text" id="edit_price" class="price form-control" />
+                                <input type="text" id="edit_price" class="form-control" />
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -146,7 +153,7 @@
                                 <td>'+item.id+'</td>\
                                 <td>'+item.name+'</td>\
                                 <td>'+item.description+'</td>\
-                                <td>'+item.image+'</td>\
+                                <td><img src="{{ asset('storage/images/articles')}}/'+item.image+'" class="img-thumbnail border-0" alt="article image" ></td>\
                                 <td>'+item.price+'$</td>\
                                 <td><button type="button" value="'+item.id+'" class="edit_article btn btn-primary btn-sm">Edit</button</td>\
                                 <td><button type="button" value="'+item.id+'" class="delete_article btn btn-danger btn-sm">Delete</button</td>\
@@ -268,11 +275,12 @@
             $(document).on('click', '.add_article', function (e) {
                 e.preventDefault();
                 
-                var data = {
-                    'name': $('.name').val(),
-                    'description': $('.description').val(),
-                    'price': $('.price').val(),
-                }
+                var name = $('.name').val();
+                var description = $('.description').val();
+                var fileName = $('.image').val();
+                var price = $('.price').val();
+                
+                var totalFormData = new FormData($("#formAddArticle")[0]);
                 
                 $.ajaxSetup({
                     headers: {
@@ -283,7 +291,10 @@
                 $.ajax({
                     type: "POST",
                     url: "/articles",
-                    data: data,
+                    data: totalFormData,
+                    processData: false,
+                    contentType: false,
+                    cache: false,
                     dataType: "json",
                     success: function (response) {
                         if(response.status == 400) {
