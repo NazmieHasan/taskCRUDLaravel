@@ -82,10 +82,7 @@ class ArticleController extends Controller
         return redirect('/add-articles')->with('status','Inserted Successfully.');
     }
     
-    
-    
-                
-    
+     
     public function edit($id) {
         $article = Article::find($id);  
         if($article) {
@@ -102,11 +99,22 @@ class ArticleController extends Controller
     }
     
     public function update(Request $request, $id) {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|max:120',
-            'description' => 'required|max:255',
-            'price' => 'required|numeric|min:0.01|regex:/^\d+(\.\d{1,2})?$/',
-        ]);
+    
+        $image = $request->file('image');
+        if ($image != '') {
+            $validator = Validator::make($request->all(), [
+                'name' => 'required|max:120',
+                'description' => 'required|max:255',
+                'image' => 'required','mimes:jpg,jpeg','max:2048',
+                'price' => 'required|numeric|min:0.01|regex:/^\d+(\.\d{1,2})?$/',
+            ]);
+        } else {
+            $validator = Validator::make($request->all(), [
+                'name' => 'required|max:120',
+                'description' => 'required|max:255',
+                'price' => 'required|numeric|min:0.01|regex:/^\d+(\.\d{1,2})?$/',
+            ]);
+        }
         
         if($validator->fails()) {
             return response()->json([
@@ -118,6 +126,13 @@ class ArticleController extends Controller
             if($article) {
                 $article->name = $request->input('name');
                 $article->description = $request->input('description');
+                
+                if($image != '') {
+                    $fileName = rand() . '.' . $image->getClientOriginalExtension();
+                    $path = $image->storeAs('public/images/articles', $fileName);
+                    $article->image = $fileName;
+                }
+            
                 $article->price = $request->input('price');
                 $article->update();
                 return response()->json([

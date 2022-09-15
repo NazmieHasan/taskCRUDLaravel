@@ -60,26 +60,32 @@
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
+                         <form id="formEditArticle" method="post" enctype="multipart/form-data">
+                            {{ csrf_field() }}
                             <ul id="updateform_errList"></ul>
                             <input type="hidden" id="edit_art_id" />
                             <div class="form-group mb-3">
                                 <label for="">Name</label>
-                                <input type="text" id="edit_name" class="form-control" />
+                                <input type="text" id="edit_name" class="form-control" name="name" />
                             </div>
                             <div class="form-group mb-3">
                                 <label for="">Description</label>
-                                <textarea class="form-control" id="edit_description" rows="6"></textarea>
+                                <textarea class="form-control" id="edit_description" rows="6" name="description"></textarea>
                             </div>
-                            
+                            <div class="form-group">
+                                <label for="">Image</label>
+                                <input accept=".jpg, .jpeg" type="file" id="edit_image" class="image form-control" name="image">
+                            </div>
                             <div class="form-group mb-3">
                                 <label for="">Price</label>
-                                <input type="text" id="edit_price" class="form-control" />
+                                <input type="text" id="edit_price" class="form-control" name="price" />
                             </div>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                             <button type="button" class="btn btn-primary update_article">Update</button>
                         </div>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -143,7 +149,7 @@
        
             function fetchArticle() {
                 $.ajax({
-                    type: "GET",
+                    method: "GET",
                     url: "/fetch-articles",
                     dataType: "json",
                     success: function (response) {
@@ -183,7 +189,7 @@
                 });
                 
                 $.ajax({
-                    type: "DELETE",
+                    method: "POST",
                     url: "/delete-article/"+art_id,
                     success: function (response) {
                         $('#success_message').addClass('alert alert-success');
@@ -202,7 +208,7 @@
                 var art_id = $(this).val();
                 $('#EditArticleModal').modal('show');
                 $.ajax({
-                    type: "GET",
+                    method: "GET",
                     url: "/edit-article/"+art_id,
                     success: function (response) {
                         if(response.status == 404) {
@@ -212,7 +218,6 @@
                         } else {
                             $('#edit_name').val(response.article.name);
                             $('#edit_description').val(response.article.description);
-                            $('#edit_image').val(response.article.image);
                             $('#edit_price').val(response.article.price);
                             $('#edit_art_id').val(art_id);
                         }
@@ -226,11 +231,13 @@
                 $(this).text("Updating");
                 
                 var art_id = $('#edit_art_id').val();
-                var data = {
-                    'name' : $('#edit_name').val(),
-                    'description' : $('#edit_description').val(),
-                    'price' : $('#edit_price').val(),
-                }
+                
+                var name = $('#edit_name').val();
+                var description = $('#edit_description').val();
+                var fileName = $('#edit_image').val();
+                var price = $('#edit_price').val();
+                
+                var totalFormData = new FormData($("#formEditArticle")[0]);
                 
                 $.ajaxSetup({
                     headers: {
@@ -239,9 +246,12 @@
                 });
                 
                 $.ajax({
-                    type: "PUT",
+                    method: "POST",
                     url: "/update-article/"+art_id,
-                    data: data,
+                    data: totalFormData,
+                    processData: false,
+                    contentType: false,
+                    cache: false,
                     dataType: "json",
                     success: function (response) {
                         if(response.status == 400) {
@@ -289,7 +299,7 @@
                 });
                 
                 $.ajax({
-                    type: "POST",
+                    method: "POST",
                     url: "/articles",
                     data: totalFormData,
                     processData: false,
