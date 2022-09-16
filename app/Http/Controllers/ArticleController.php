@@ -100,7 +100,9 @@ class ArticleController extends Controller
     
     public function update(Request $request, $id) {
     
+        $image_name = $request->hidden_image;
         $image = $request->file('image');
+        
         if ($image != '') {
             $validator = Validator::make($request->all(), [
                 'name' => 'required|max:120',
@@ -207,6 +209,27 @@ class ArticleController extends Controller
             'minPriceDefault' => $minPriceDefault,
             'maxPriceDefault' => $maxPriceDefault,
         ]);    
+    }
+    
+    public function search(Request $request) {
+        $output = "";
+        
+        $articles = Article::where('name', 'like', '%'.$request->search.'%')->get();
+        
+        foreach($articles as $article) {
+            $output .=
+            '<tr>
+                <td> '.$article->id.' </td>
+                <td> '.$article->name.' </td>
+                <td> '.$article->description.' </td>
+                <td> '.$article->image.' </td>
+                <td> '.$article->price.' </td>\
+                <td><button type="button" value="'.$article->id.'" class="edit_article btn btn-primary btn-sm">Edit</button</td>
+                <td><button type="button" value="'.$article->id.'" class="delete_article btn btn-danger btn-sm">Delete</button</td>
+            </tr>';
+        }
+        
+        return response($output);
     }
        
 }

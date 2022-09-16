@@ -12,6 +12,12 @@
     <body>
         <div class="content">
         
+            <div class="search m-5">
+                <div class="search m-5">
+                    <input type="search" name="search" id="search" class="form-control" />
+                </div>
+            </div>
+        
             {{-- Add Article Modal Start --}}
             <div class="modal fade" id="AddArticleModal" tabindex="-1" aria-labelledby="AddModalLabel" aria-hidden="true">
                 <div class="modal-dialog">
@@ -75,6 +81,7 @@
                             <div class="form-group">
                                 <label for="">Image</label>
                                 <input accept=".jpg, .jpeg" type="file" id="edit_image" class="image form-control" name="image">
+                                <p id="store_image"></p>
                             </div>
                             <div class="form-group mb-3">
                                 <label for="">Price</label>
@@ -130,7 +137,9 @@
                                     <th>Delete</th>
                                 </tr>
                             </thead>
-                            <tbody>   
+                            <tbody class="allData">   
+                            </tbody>
+                            <tbody id="Content" class="searchData">   
                             </tbody>
                         </table>
                     </div>
@@ -138,12 +147,37 @@
             </div> 
             
         </div>    
-    </body>
+   
     
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script> 
     <script>
+    
         $(document).ready(function () {
+        
+            $('#search').on('keyup', function() {
+            $value = $(this).val();
+            
+            if($value) {
+                $('.allData').hide();
+                $('.searchData').show();
+            } else {
+                $('.allData').show();
+                $('.searchData').hide();
+            }
+            
+            $.ajax({
+                method: "GET",
+                url: "/search",
+                data: {'search':$value},
+                
+                success: function (data) {
+                    console.log(data);
+                    $('#Content').html(data);
+                }
+                
+            });
+            });
         
             fetchArticle();
        
@@ -218,6 +252,8 @@
                         } else {
                             $('#edit_name').val(response.article.name);
                             $('#edit_description').val(response.article.description);
+                            $('#store_image').html("<img src={{ URL::to('/') }}/storage/images/articles/" + response.article.image + " width='80' class='img-thumbnail mt-1 border-0' />");
+                            $('#store_image').append("<input type='hidden' name='hidden_image' value='"+response.article.image+"' />");
                             $('#edit_price').val(response.article.price);
                             $('#edit_art_id').val(art_id);
                         }
@@ -263,7 +299,7 @@
                             $('update_article').text('Update');
                         } else if(response.status == 404) {
                             $('#updateform_errList').html("");
-                            $('#updateform_errList').addClass('alert alert-success');
+                            $('#updateform_errList').addClass('alert alert-danger');
                             $('#success_message').text(response.message);
                             $('update_article').text('Update');
                         } else {
@@ -271,7 +307,6 @@
                             $('#success_message').html("");
                             $('#success_message').addClass('alert alert-success');
                             $('#success_message').text(response.message);
-                            
                             $('#EditArticleModal').modal('hide');
                             $('update_article').text('Update');
                             fetchArticle();
@@ -330,4 +365,5 @@
         });
     
     </script>
+    </body>
 </html>
