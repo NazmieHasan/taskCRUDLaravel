@@ -231,5 +231,20 @@ class ArticleController extends Controller
         
         return response($output);
     }
+    
+    public function slider(Request $request) {
+        if ($request->ajax() && isset($request->start) && isset($request->end) ) {
+            $start = $request->start;
+            $end = $request->end;
+            
+            $articles = DB::table('articles')->where('price', $start)->get();
+            
+            response()->json($articles);
+            return view('article.find', compact('articles'));
+        } else {
+            $articles = Article::orderBy('id', 'DESC')->get();
+            return view('article.slider', compact('articles'));
+        }
+    }
        
 }
