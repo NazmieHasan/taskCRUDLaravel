@@ -234,10 +234,10 @@ class ArticleController extends Controller
     
     public function slider(Request $request) {
         if ($request->ajax() && isset($request->start) && isset($request->end) ) {
-            $start = $request->start;
-            $end = $request->end;
+            $start = (int)$request->start;
+            $end = (int)$request->end;
             
-            $articles = DB::table('articles')->where('price', $start)->get();
+            $articles = DB::table('articles')->where('price', '>=', $start)->where('price', '<=', $end)->get();
             
             response()->json($articles);
             return view('article.find', compact('articles'));

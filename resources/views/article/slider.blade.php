@@ -21,7 +21,7 @@
         $("#amount_end").val(ui.values[1]);
         
         var start = $("#amount_start").val();
-        var end = $("#amount_start").val();
+        var end = $("#amount_end").val();
         
         $.ajax({
             method: 'get', 
@@ -55,7 +55,7 @@
 </p> 
 <div id="slider-range"></div>
 
-<div id='updateDiv'></div>
+<div id="updateDiv">
 
 <?php if ($articles->isEmpty()) { ?>
 Not found articles
@@ -70,6 +70,6 @@ Not found articles
 </div>
 
 
-
+</div>
 </body>
 </html>
