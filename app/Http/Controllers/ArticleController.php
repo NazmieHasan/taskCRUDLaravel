@@ -10,17 +10,10 @@ use DB;
 class ArticleController extends Controller
 {
     public function index() {
-        return view('article.index');
+        return view('index');
     }
     
-    public function fetchArticle() {
-        $articles = Article::orderBy('id', 'DESC')->get();
-        return response()->json([
-            'articles' => $articles,
-        ]);
-    }
-    
-    public function store(Request $request) {
+    public function create(Request $request) {
         $validator = Validator::make($request->all(), [
             'name' => 'required|max:120',
             'description' => 'required|max:255',
@@ -39,8 +32,9 @@ class ArticleController extends Controller
             $article->description = $request->input('description');
             
             $image = $request->file('image');
-            $fileName = rand() . '.' . $image->getClientOriginalExtension();
-            $path = $image->storeAs('public/images/articles', $fileName);
+            $fileName = md5($image->getClientOriginalName() . time()) . "." . $image->getClientOriginalExtension();
+            $destinationPath = public_path('/images/articles');
+            $image->move($destinationPath, $fileName);
             $article->image = $fileName;
             
             $article->price = $request->input('price');
@@ -52,37 +46,13 @@ class ArticleController extends Controller
         }   
     }
     
-    
-    public function create()
-    {
-        return view('article.create');
-    }
-
-    public function storenew(Request $request)
-    {
-        $this->validate($request, [
-            'name'=>'required|max:120',
-            'description'=>'required|max:255',
-            'image' => 'required|mimes:jpg,jpeg|max:2048',
-            'price' => 'required|numeric|min:0.01|regex:/^\d+(\.\d{1,2})?$/',
+    public function fetchArticle() {
+        $articles = Article::orderBy('id', 'DESC')->get();
+        return response()->json([
+            'articles' => $articles,
         ]);
-
-            $article = new Article;
-            $article->name = $request->input('name');
-            $article->description = $request->input('description');
-            
-            $image = $request->file('image');
-            $fileName = rand() . '.' . $image->getClientOriginalExtension();
-            $path = $image->storeAs('public/images/articles', $fileName);
-            $article->image = $fileName;
-            
-            $article->price = $request->input('price');
-            $article->save();
-        
-        return redirect('/add-articles')->with('status','Inserted Successfully.');
     }
     
-     
     public function edit($id) {
         $article = Article::find($id);  
         if($article) {
@@ -130,8 +100,9 @@ class ArticleController extends Controller
                 $article->description = $request->input('description');
                 
                 if($image != '') {
-                    $fileName = rand() . '.' . $image->getClientOriginalExtension();
-                    $path = $image->storeAs('public/images/articles', $fileName);
+                    $fileName = md5($image->getClientOriginalName() . time()) . "." . $image->getClientOriginalExtension();
+                    $destinationPath = public_path('/images/articles');
+                    $image->move($destinationPath, $fileName);
                     $article->image = $fileName;
                 }
             
@@ -160,91 +131,53 @@ class ArticleController extends Controller
         ]);
     }
     
-    public function searchByNameAndPrice(Request $request) {
+    public function customValuesSlider() {
     
         $queryMin = "CAST(price AS DECIMAL(10,2)) ASC";
-        $minPrice = DB::table('articles')->select('price')->orderByRaw($queryMin)->value('price');
+        $min = DB::table('articles')->select('price')->orderByRaw($queryMin)->value('price');
        
         $queryMax = "CAST(price AS DECIMAL(10,2)) DESC";
-        $maxPrice = DB::table('articles')->select('price')->orderByRaw($queryMax)->value('price');
+        $max = DB::table('articles')->select('price')->orderByRaw($queryMax)->value('price');
         
-        $diffPrice = $maxPrice - $minPrice;
+        $diffPrice = $max - $min;
         $step = $diffPrice / 10;
-
-        $minPriceDefault = $minPrice + ($step * 3); 
-        $maxPriceDefault = $minPrice + ($step * 7);
-    
-        $name = ''; $articleFinds = ''; 
-        $pricefrom = ''; $priceto = ''; 
         
-        $name = $request->input('name');
-        $pricefrom = $request->input('pricefrom');
-        $priceto = $request->input('priceto');
-       
-        $qb = DB::table('articles');
+        $minDefault = $min + ($step * 3); 
+        $maxDefault = $min + ($step * 7);
         
-        if ($name) {
-            $qb->where('name', 'like', '%'.$name.'%');
-        }
-        
-        if ( ($pricefrom ) && ($priceto) ) {
-            $qb->whereBetween('price', [(double)$pricefrom, (double)$priceto]);
-        }
-        
-        if ( ($pricefrom) && (!$priceto) ) {
-            $qb->where('price', '>', (double)$pricefrom);
-        }
-        
-        if ( ($priceto) && (!$pricefrom) ) {
-            $qb->where('price', '<', (double)$priceto);
-        }
-        
-        $articleFinds = $qb->get();
-            
-        return view('article.search', [
-            'articleFinds' => $articleFinds,
-            'minPrice' => $minPrice,
-            'maxPrice' => $maxPrice,
+        return response()->json([
+            'min' => $min,
+            'max' => $max,
             'step' => $step,
-            'minPriceDefault' => $minPriceDefault,
-            'maxPriceDefault' => $maxPriceDefault,
-        ]);    
+            'minDefault' => $minDefault,
+            'maxDefault' => $maxDefault,
+        ]);
+
     }
     
     public function search(Request $request) {
         $output = "";
-        
-        $articles = Article::where('name', 'like', '%'.$request->search.'%')->get();
-        
+      
+        $name = $request->name;
+        $minPrice = (int)$request->startPrice;
+        $maxPrice= (int)$request->endPrice;
+            
+        $articles = Article::where('name', 'like', '%'.$name.'%')->where('price', '>=', $minPrice)->where('price', '<=', $maxPrice)->get(); 
+            
         foreach($articles as $article) {
             $output .=
             '<tr>
                 <td> '.$article->id.' </td>
                 <td> '.$article->name.' </td>
-                <td> '.$article->description.' </td>
-                <td> '.$article->image.' </td>
+                <td> '.$article->description.' </td>\
+                <td><img src="/images/articles/'.$article->image.'" class="img-thumbnail border-0" alt="article image" /></td>
                 <td> '.$article->price.' </td>\
                 <td><button type="button" value="'.$article->id.'" class="edit_article btn btn-primary btn-sm">Edit</button</td>
                 <td><button type="button" value="'.$article->id.'" class="delete_article btn btn-danger btn-sm">Delete</button</td>
             </tr>';
-        }
+        }  
         
-        return response($output);
-    }
-    
-    public function slider(Request $request) {
-        if ($request->ajax() && isset($request->start) && isset($request->end) ) {
-            $start = (int)$request->start;
-            $end = (int)$request->end;
-            
-            $articles = DB::table('articles')->where('price', '>=', $start)->where('price', '<=', $end)->get();
-            
-            response()->json($articles);
-            return view('article.find', compact('articles'));
-        } else {
-            $articles = Article::orderBy('id', 'DESC')->get();
-            return view('article.slider', compact('articles'));
-        }
+        return response($output);  
     }
        
 }
