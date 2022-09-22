@@ -76,6 +76,7 @@
                         $('#success_message').text(response.message);
                         $('#AddArticleModal').modal('hide');
                         $('#AddArticleModal').find('input').val("");
+                        customValuesSlider();
                         fetchArticle();
                     }         
                 }
@@ -160,6 +161,7 @@
                         $('#success_message').text(response.message);
                         $('#EditArticleModal').modal('hide');
                         $('update_article').text('Update');
+                        customValuesSlider();
                         fetchArticle();
                     }
                 }
@@ -195,36 +197,44 @@
                     $('#success_message').text(response.message);
                     $('#DeleteArticleModal').modal('hide');
                     $('.delete_article_btn').text("Yes, Delete");
+                    customValuesSlider();
                     fetchArticle();
                 }
             });
                 
-        });  
+        });
+          
+          
+        customValuesSlider()
          
         // set values in range slider from database  
-        var min, max, step, minDefault, maxDefault;
-        $.ajax({
-            url: "/custom-values-slider",
-            dataType: "json",
-            async: false,
-            success: function(response) {
-                max = response.max;
-                min = response.min;
-                minDefault = response.minDefault;
-                maxDefault = response.maxDefault;
-                step = response.step;
-            }
-        });
- 
-        $( "#slider-range" ).slider({
-            min: Number(min),
-            max: Number(max),
-            values: [minDefault, maxDefault],
-            step: step,
-        });
+        function customValuesSlider() {
+            var min, max, step, minDefault, maxDefault;
             
-        $("#amount_start").val(minDefault);   
-        $("#amount_end").val(maxDefault); 
+            $.ajax({
+                url: "/custom-values-slider",
+                dataType: "json",
+                async: false,
+                success: function(response) {
+                    max = response.max;
+                    min = response.min;
+                    minDefault = response.minDefault;
+                    maxDefault = response.maxDefault;
+                    step = response.step;
+                }
+            });
+ 
+            $( "#slider-range" ).slider({
+                min: Number(min),
+                max: Number(max),
+                values: [minDefault, maxDefault],
+                step: Number(step),
+            });
+
+            $("#amount_start").val(minDefault);   
+            $("#amount_end").val(maxDefault);
+        
+        }
         
         $('.findData').hide();       
                

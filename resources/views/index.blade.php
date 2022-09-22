@@ -18,15 +18,15 @@
             <div class="container">
                 <div class="row">
                     <div class="col-md-5">
-                        <input type="search" name="name" id="name" class="form-control" placeholder="Enter Name" />
+                        <input type="search" name="name" id="name" class="form-control mb-3" placeholder="Enter Name" />
                     </div>
                     <div class="col-md-5">
                         <div id="slider-range"></div>
-                        <p>
-                            <label for="amount">Price:</label>
-                            <input type="text" size="2" id="amount_start" class="m-1 border-0" name="start_price" value="" disabled />
-                            <input type="text" size="2" id="amount_end" class="m-1 border-0" name="end_price" value="" disabled />
-                        </p>
+                        <div class="mt-2 mb-2">
+                            <label for="amount">Price Range $: </label>
+                            <input type="text" size="2" id="amount_start" class="bg-transparent border-0" name="start_price" value="" disabled />
+                            <input type="text" size="2" id="amount_end" class="bg-transparent border-0" name="end_price" value="" disabled />
+                        </div>
                     </div>
                     <div class="col-md-2">
                         <button class="btn btn-outline-primary" onclick="find()">Search</button>

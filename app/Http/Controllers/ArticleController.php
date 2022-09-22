@@ -135,15 +135,20 @@ class ArticleController extends Controller
     
         $queryMin = "CAST(price AS DECIMAL(10,2)) ASC";
         $min = DB::table('articles')->select('price')->orderByRaw($queryMin)->value('price');
+        $min = floor($min);
        
         $queryMax = "CAST(price AS DECIMAL(10,2)) DESC";
         $max = DB::table('articles')->select('price')->orderByRaw($queryMax)->value('price');
+        $max = ceil($max);
         
         $diffPrice = $max - $min;
         $step = $diffPrice / 10;
+        $step = ceil($step);
         
         $minDefault = $min + ($step * 3); 
         $maxDefault = $min + ($step * 7);
+        
+        $max = $min + ($step * 10);
         
         return response()->json([
             'min' => $min,
