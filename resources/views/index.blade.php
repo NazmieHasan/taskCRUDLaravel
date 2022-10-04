@@ -17,7 +17,7 @@
             {{-- SEARCH Article Start --}}
             <div class="container">
                 <div class="row">
-                    <div class="col-md-5">
+                    <div class="col-md-4">
                         <input type="search" name="name" id="name" class="form-control mb-3" placeholder="Enter Name" />
                     </div>
                     <div class="col-md-5">
@@ -28,8 +28,16 @@
                             <input type="text" size="2" id="amount_end" class="bg-transparent border-0" name="end_price" value="" disabled />
                         </div>
                     </div>
-                    <div class="col-md-2">
-                        <button class="btn btn-outline-primary" onclick="find()">Search</button>
+                    <div class="col-md-3">
+                        <label for="cars">Sort By:</label>
+                        <select name="sort_type" id="sort_type">
+                            <option value="id desc">Default</option>
+                            <option value="name asc">Name Asc</option>
+                            <option value="name desc">Name Desc</option>
+                            <option value="price asc">Price Asc</option>
+                            <option value="price desc">Price Desc</option>
+                        </select>
+                        <button class="btn btn-primary" onclick="find()">Search</button>
                     </div>
                 </div>
             </div>

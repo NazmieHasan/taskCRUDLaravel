@@ -165,9 +165,14 @@ class ArticleController extends Controller
       
         $name = $request->name;
         $minPrice = (int)$request->startPrice;
-        $maxPrice= (int)$request->endPrice;
-            
-        $articles = Article::where('name', 'like', '%'.$name.'%')->where('price', '>=', $minPrice)->where('price', '<=', $maxPrice)->get(); 
+        $maxPrice = (int)$request->endPrice;
+        
+        $sortType = $request->sort_type;
+        $sort = explode(" ", $sortType);
+        $field = $sort[0];
+        $type = $sort[1];
+        
+        $articles = Article::where('name', 'like', '%'.$name.'%')->where('price', '>=', $minPrice)->where('price', '<=', $maxPrice)->orderBY($field, $type)->get(); 
             
         foreach($articles as $article) {
             $output .=

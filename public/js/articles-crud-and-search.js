@@ -16,6 +16,7 @@
         var startPr = $("#amount_start").val();
         var endPr = $("#amount_end").val();
         var name = $("#name").val();
+        var sort_type = $("#sort_type").val();
                 
         if ((name) || (startPr) || (endPr)) {
             $('.allData').hide();
@@ -28,7 +29,7 @@
         $.ajax({
             method: 'get', 
             url: '/search', 
-            data: "name="+name+"&startPrice="+startPr+"&endPrice="+endPr,
+            data: "name="+name+"&startPrice="+startPr+"&endPrice="+endPr+"&sort_type="+sort_type,
             
             success: function (data) {
                 $('#findData').html(data);
